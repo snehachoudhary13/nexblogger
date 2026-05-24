@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>NexBlogger — Community Workspaces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+  <div class="bg-mesh" aria-hidden="true">
+    <div class="mesh-orb mesh-orb--1"></div>
+    <div class="mesh-orb mesh-orb--2"></div>
+    <div class="mesh-orb mesh-orb--3"></div>
+  </div>
+
+  <nav class="nav" id="nav">
+    <a class="nav__logo" href="/" onclick="navigate('home');return false">
+      <span class="logo-hex">⬡</span><span class="logo-text">NexBlogger</span>
+    </a>
+    <div class="nav__search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="nav__search" id="nav-search" type="search" placeholder="Search workspaces…" oninput="searchWorkspaces(this.value)"/>
+    </div>
+    <div class="nav__right" id="nav-right"></div>
+  </nav>
+
+  <div id="page-transition" class="page-transition"></div>
+  <main id="app" class="app-root"></main>
+
+  <div id="toast-stack" class="toast-stack"></div>
+
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal(event)">
+    <div class="modal glass" onclick="event.stopPropagation()" id="modal-box">
+      <button class="modal__close" onclick="closeModal()">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="lightbox" class="lightbox hidden" onclick="closeLightbox()">
+    <button class="lightbox__close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt=""/>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/core.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/workspaces.js"></script>
+  <script src="/js/posts.js"></script>
+  <script src="/js/polls.js"></script>
+  <script src="/js/files.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

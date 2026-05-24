@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    image: nexus-app:local
+    container_name: nexus-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - nexus-data:/app/data
+      - nexus-uploads:/app/uploads
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=change-this-to-something-long-and-random
+
+volumes:
+  nexus-data:
+  nexus-uploads:
