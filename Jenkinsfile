@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_REPO = 'YOUR_DOCKERHUB_USERNAME/nexus-app'
+        DOCKERHUB_REPO = 'snehaworkspace/nexblogger'
         IMAGE_TAG      = "${env.BUILD_NUMBER}"
         IMAGE_LATEST   = 'latest'
     }
