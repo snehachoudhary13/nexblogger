@@ -7,6 +7,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions: read-all              # Fix: CKV2_GHA_1 - explicit read-only top-level
+
 jobs:
   secret-scan:
     name: Gitleaks Secret Scan
