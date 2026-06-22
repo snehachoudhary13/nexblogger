@@ -1,94 +1,54 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nexus-app
-  namespace: nexblogger        # Fix: CKV_K8S_21 - don't use default namespace
-  labels:
-    app: nexus-app
-spec:
-  replicas: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  selector:
-    matchLabels:
-      app: nexus-app
-  template:
-    metadata:
-      labels:
-        app: nexus-app
-      annotations:
-        seccomp.security.alpha.kubernetes.io/pod: runtime/default  # Fix: CKV_K8S_31
-    spec:
-      automountServiceAccountToken: false      # Fix: CKV_K8S_38
-      securityContext:                         # Fix: CKV_K8S_29 (pod-level)
-        runAsNonRoot: true                     # Fix: CKV_K8S_23
-        runAsUser: 10001                       # Fix: CKV_K8S_40 - high UID
-        seccompProfile:
-          type: RuntimeDefault                 # Fix: CKV_K8S_31
-      containers:
-        - name: app
-          image: YOUR_DOCKERHUB_USERNAME/nexus-app:1.0.0   # Fix: CKV_K8S_14 - no :latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-          env:
-            - name: PORT
-              value: "3000"
-            - name: JWT_SECRET
-              value: "change-in-production"
-          securityContext:                           # Fix: CKV_K8S_30 (container-level)
-            allowPrivilegeEscalation: false          # Fix: CKV_K8S_20
-            readOnlyRootFilesystem: true             # Fix: CKV_K8S_22
-            runAsNonRoot: true                       # Fix: CKV_K8S_23
-            runAsUser: 10001                         # Fix: CKV_K8S_40
-            capabilities:
-              drop:
-                - ALL                               # Fix: CKV_K8S_28, CKV_K8S_37
-          livenessProbe:
-            httpGet: { path: /api/health, port: 3000 }
-            initialDelaySeconds: 15
-            periodSeconds: 20
-          readinessProbe:
-            httpGet: { path: /api/health, port: 3000 }
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          resources:
-            requests: { cpu: "50m", memory: "64Mi" }
-            limits:   { cpu: "250m", memory: "256Mi" }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nexus-svc
-  namespace: nexblogger          # Fix: CKV_K8S_21 - service also needs namespace
-spec:
-  type: NodePort
-  selector:
-    app: nexus-app
-  ports:
-    - port: 80
-      targetPort: 3000
-      nodePort: 30080
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy                # Fix: CKV2_K8S_6 - pods need a NetworkPolicy
-metadata:
-  name: nexus-app-netpol
-  namespace: nexblogger
-spec:
-  podSelector:
-    matchLabels:
-      app: nexus-app
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - ports:
-        - port: 3000
-  egress:
-    - ports:
-        - port: 53          # Allow DNS
-          protocol: UDP
+name: Security Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  deployments: read
+  issues: read
+  packages: read
+  pull-requests: read
+  repository-projects: read
+  security-events: read
+  statuses: read
+
+jobs:
+  secret-scan:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  iac-scan:
+    name: Checkov IaC & Dockerfile Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          quiet: true
+          soft_fail: false
+          skip_check: CKV_K8S_43  # digest pinning impractical without live registry
