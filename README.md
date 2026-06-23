@@ -125,12 +125,4 @@ Changed `nexus-app:latest` to a specific version tag for reproducible builds.
 
 ---
 
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
-private Key--
------BEGIN RSA PRIVATE KEY-----
-MIIEowIBAAKCAQEA2a2rwplBQLF29amygykEMmYz0+Kcj3bKBp29d2lFMRMBMQSN
------END RSA PRIVATE KEY-----
-
-STRIPE_SECRET_KEY=sk_live_4eC39HqLyjWDarjtT1zdp7dc
