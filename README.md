@@ -126,4 +126,5 @@ Changed `nexus-app:latest` to a specific version tag for reproducible builds.
 ---
 
 
-- AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLEFAKEKEY123
+- GITHUB_TOKEN=ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890
+  
