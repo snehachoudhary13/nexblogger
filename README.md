@@ -125,10 +125,5 @@ Changed `nexus-app:latest` to a specific version tag for reproducible builds.
 
 ---
 
-## Interview Talking Points
 
-- Gate catches issues **before** merge — not after deployment
-- Scans **3 layers**: secrets, Dockerfile, Kubernetes manifests
-- Found **16 real misconfigs** on an existing production-ready repo
-- Fixed Kubernetes deployment from **15 failures → 0**
-- Workflow scanned **itself** and caught its own over-permissioned token
+- AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLEFAKEKEY123
